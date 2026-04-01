@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js Template",
-  description: "A minimal Next.js starter template",
+  title: "AI Resume Builder",
+  description: "Your intelligent resume creation assistant",
 };
 
 export default function RootLayout({
