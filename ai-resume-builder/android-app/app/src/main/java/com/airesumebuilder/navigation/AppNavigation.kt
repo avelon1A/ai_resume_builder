@@ -30,6 +30,7 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val authViewModel: AuthViewModel = hiltViewModel()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
+    val userName by authViewModel.userName.collectAsState()
 
     val startDestination = if (isLoggedIn) Screen.Home.route else Screen.Welcome.route
 
@@ -75,7 +76,7 @@ fun AppNavigation() {
 
         composable(Screen.Home.route) {
             HomeScreen(
-                userName = null,
+                userName = userName,
                 onGenerateResume = { navController.navigate(Screen.ResumeBuilder.route) },
                 onGenerateCoverLetter = { navController.navigate(Screen.CoverLetter.route) },
                 onMyResumes = { navController.navigate(Screen.MyResumes.route) },

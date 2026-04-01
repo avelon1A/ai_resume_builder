@@ -2,7 +2,6 @@ package com.airesumebuilder.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.airesumebuilder.data.repository.AuthRepositoryImpl
 import com.airesumebuilder.domain.model.*
 import com.airesumebuilder.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +19,9 @@ class AuthViewModel @Inject constructor(
 
     private val _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
+
+    val userName: StateFlow<String?> = authRepository.getUserName()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     init {
         viewModelScope.launch {

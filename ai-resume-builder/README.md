@@ -30,12 +30,17 @@ cp ../.env.example .env
 # Edit .env with your OPENAI_API_KEY
 ```
 
-2. **Run locally** (uses H2 in-memory database):
+2. **Generate Gradle wrapper** (if not present):
+```bash
+gradle wrapper --gradle-version 8.9
+```
+
+3. **Run locally** (uses H2 in-memory database):
 ```bash
 ./gradlew run
 ```
 
-3. **Run with Docker** (uses PostgreSQL):
+4. **Run with Docker** (uses PostgreSQL):
 ```bash
 cd ai-resume-builder
 docker compose up --build
@@ -85,10 +90,13 @@ docker compose up --build
 ### Setup
 
 1. Open `android-app` in Android Studio
-2. Sync Gradle
-3. Run on emulator or device
+2. Generate Gradle wrapper if prompted (Android Studio usually does this automatically)
+3. Sync Gradle
+4. Run on emulator or device
 
 The default `BASE_URL` points to `http://10.0.2.2:8080` (Android emulator localhost).
+
+For physical devices, update `BASE_URL` in `app/build.gradle.kts` to your backend's IP address.
 
 ## Environment Variables
 

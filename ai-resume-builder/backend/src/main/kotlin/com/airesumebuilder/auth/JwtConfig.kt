@@ -9,12 +9,17 @@ import io.ktor.server.auth.jwt.*
 import java.util.*
 
 object JwtConfig {
-    private const val SECRET = "ai-resume-builder-jwt-secret-change-in-production"
     private const val ISSUER = "ai-resume-builder"
     private const val AUDIENCE = "ai-resume-builder-users"
     private const val VALIDITY_MS = 7 * 24 * 60 * 60 * 1000L // 7 days
 
-    private val algorithm = Algorithm.HMAC256(SECRET)
+    private var secret: String = "ai-resume-builder-jwt-secret-change-in-production"
+
+    fun init(config: ApplicationConfig) {
+        secret = config.propertyOrNull("jwt.secret")?.getString() ?: secret
+    }
+
+    private val algorithm by lazy { Algorithm.HMAC256(secret) }
 
     val verifier: JWTVerifier = JWT.require(algorithm)
         .withIssuer(ISSUER)
@@ -32,6 +37,7 @@ object JwtConfig {
 }
 
 fun Application.configureJWT(config: ApplicationConfig) {
+    JwtConfig.init(config)
     install(Authentication) {
         jwt("auth-jwt") {
             realm = "ai-resume-builder"
