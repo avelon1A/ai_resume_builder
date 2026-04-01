@@ -1,32 +1,26 @@
 package com.airesumebuilder.di
 
-import android.content.Context
 import com.airesumebuilder.BuildConfig
 import com.airesumebuilder.data.remote.api.ApiService
 import com.airesumebuilder.data.repository.AuthRepositoryImpl
 import com.airesumebuilder.data.repository.ResumeRepositoryImpl
 import com.airesumebuilder.domain.repository.AuthRepository
 import com.airesumebuilder.domain.repository.ResumeRepository
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import com.airesumebuilder.presentation.viewmodel.AuthViewModel
+import com.airesumebuilder.presentation.viewmodel.ResumeViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
+val appModule = module {
 
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
+    single {
+        OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
@@ -36,32 +30,20 @@ object AppModule {
             .build()
     }
 
-    @Provides
-    @Singleton
-    fun provideApiService(okHttpClient: OkHttpClient): ApiService {
-        return Retrofit.Builder()
+    single {
+        Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL + "/")
-            .client(okHttpClient)
+            .client(get())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideAuthRepository(
-        apiService: ApiService,
-        @ApplicationContext context: Context
-    ): AuthRepository {
-        return AuthRepositoryImpl(apiService, context)
-    }
+    single<AuthRepository> { AuthRepositoryImpl(get(), androidContext()) }
 
-    @Provides
-    @Singleton
-    fun provideResumeRepository(
-        apiService: ApiService,
-        @ApplicationContext context: Context
-    ): ResumeRepository {
-        return ResumeRepositoryImpl(apiService, context)
-    }
+    single<ResumeRepository> { ResumeRepositoryImpl(get(), androidContext()) }
+
+    viewModel { AuthViewModel(get()) }
+
+    viewModel { ResumeViewModel(get()) }
 }

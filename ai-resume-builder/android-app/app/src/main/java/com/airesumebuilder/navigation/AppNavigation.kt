@@ -1,7 +1,7 @@
 package com.airesumebuilder.navigation
 
 import androidx.compose.runtime.*
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import androidx.navigation.navArgument
@@ -28,7 +28,7 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val authViewModel: AuthViewModel = hiltViewModel()
+    val authViewModel: AuthViewModel = koinViewModel()
     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
     val userName by authViewModel.userName.collectAsState()
 

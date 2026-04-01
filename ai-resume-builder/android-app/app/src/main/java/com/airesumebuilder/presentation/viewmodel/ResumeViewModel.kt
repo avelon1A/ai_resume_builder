@@ -5,13 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.airesumebuilder.domain.model.*
 import com.airesumebuilder.domain.repository.GenerateResumeResponse
 import com.airesumebuilder.domain.repository.ResumeRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class ResumeViewModel @Inject constructor(
+class ResumeViewModel(
     private val resumeRepository: ResumeRepository
 ) : ViewModel() {
 

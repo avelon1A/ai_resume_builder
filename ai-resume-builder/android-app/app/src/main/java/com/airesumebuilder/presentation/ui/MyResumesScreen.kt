@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.airesumebuilder.domain.model.*
 import com.airesumebuilder.presentation.viewmodel.ResumeViewModel
 
@@ -22,7 +22,7 @@ import com.airesumebuilder.presentation.viewmodel.ResumeViewModel
 fun MyResumesScreen(
     onNavigateBack: () -> Unit,
     onResumeClick: (String) -> Unit,
-    viewModel: ResumeViewModel = hiltViewModel()
+    viewModel: ResumeViewModel = koinViewModel()
 ) {
     val resumesList by viewModel.resumesList.collectAsState()
 

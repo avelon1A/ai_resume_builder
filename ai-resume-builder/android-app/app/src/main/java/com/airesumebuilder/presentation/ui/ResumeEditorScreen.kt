@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.airesumebuilder.presentation.viewmodel.ResumeViewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -29,7 +29,7 @@ import java.io.FileOutputStream
 fun ResumeEditorScreen(
     resumeId: String,
     onNavigateBack: () -> Unit,
-    viewModel: ResumeViewModel = hiltViewModel()
+    viewModel: ResumeViewModel = koinViewModel()
 ) {
     val currentResume by viewModel.currentResume.collectAsState()
     val context = LocalContext.current

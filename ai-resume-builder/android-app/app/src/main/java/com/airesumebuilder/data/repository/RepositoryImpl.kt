@@ -9,19 +9,15 @@ import com.airesumebuilder.data.remote.dto.*
 import com.airesumebuilder.domain.model.*
 import com.airesumebuilder.domain.repository.AuthRepository
 import com.airesumebuilder.domain.repository.ResumeRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_prefs")
 
-@Singleton
-class AuthRepositoryImpl @Inject constructor(
+class AuthRepositoryImpl(
     private val apiService: ApiService,
-    @ApplicationContext private val context: Context
+    private val context: Context
 ) : AuthRepository {
 
     companion object {
@@ -95,10 +91,9 @@ class AuthRepositoryImpl @Inject constructor(
     }
 }
 
-@Singleton
-class ResumeRepositoryImpl @Inject constructor(
+class ResumeRepositoryImpl(
     private val apiService: ApiService,
-    @ApplicationContext private val context: Context
+    private val context: Context
 ) : ResumeRepository {
 
     private suspend fun getToken(): String {

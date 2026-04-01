@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.androidx.compose.koinViewModel
 import com.airesumebuilder.domain.model.*
 import com.airesumebuilder.presentation.viewmodel.ResumeViewModel
 
@@ -22,7 +22,7 @@ import com.airesumebuilder.presentation.viewmodel.ResumeViewModel
 @Composable
 fun CoverLetterScreen(
     onNavigateBack: () -> Unit,
-    viewModel: ResumeViewModel = hiltViewModel()
+    viewModel: ResumeViewModel = koinViewModel()
 ) {
     var name by remember { mutableStateOf("") }
     var jobRole by remember { mutableStateOf("") }
