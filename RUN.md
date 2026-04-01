@@ -5,7 +5,7 @@
 Run both frontend and backend in parallel using a single command:
 
 ```bash
-(cd ai-resume-builder/backend && ./gradlew run) & bun dev
+bun install && (cd ai-resume-builder/backend && ./gradlew run) & bun dev
 ```
 
 This starts:
