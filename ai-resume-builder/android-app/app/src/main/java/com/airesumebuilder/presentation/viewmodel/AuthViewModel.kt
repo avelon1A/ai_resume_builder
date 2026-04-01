@@ -50,6 +50,17 @@ class AuthViewModel(
         }
     }
 
+    fun guestLogin(deviceId: String) {
+        viewModelScope.launch {
+            _authState.value = AuthState(isLoading = true)
+            when (val result = authRepository.guestLogin(deviceId)) {
+                is Resource.Success -> _authState.value = result.data
+                is Resource.Error -> _authState.value = AuthState(error = result.message)
+                is Resource.Loading -> {}
+            }
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()

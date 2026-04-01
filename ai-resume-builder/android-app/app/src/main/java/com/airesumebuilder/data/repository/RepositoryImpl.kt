@@ -1,6 +1,7 @@
 package com.airesumebuilder.data.repository
 
 import android.content.Context
+import android.provider.Settings
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
@@ -58,6 +59,22 @@ class AuthRepositoryImpl(
             )
         } catch (e: Exception) {
             Resource.Error(e.message ?: "Registration failed")
+        }
+    }
+
+    override suspend fun guestLogin(deviceId: String): Resource<AuthState> {
+        return try {
+            val response = apiService.guestLogin(GuestLoginRequest(deviceId))
+            saveAuthData(response)
+            Resource.Success(
+                AuthState(
+                    isAuthenticated = true,
+                    user = User(response.userId, response.email, response.name, response.subscriptionTier),
+                    token = response.token
+                )
+            )
+        } catch (e: Exception) {
+            Resource.Error(e.message ?: "Guest login failed")
         }
     }
 

@@ -68,6 +68,41 @@ class AuthService {
         }
     }
 
+    fun guestLogin(request: GuestLoginRequest): AuthResponse {
+        if (request.deviceId.isBlank()) {
+            throw IllegalArgumentException("Device ID is required")
+        }
+
+        val guestEmail = "guest_${request.deviceId}@device.local"
+
+        return transaction {
+            val existing = UsersTable.selectAll().where { UsersTable.email eq guestEmail }.singleOrNull()
+
+            if (existing != null) {
+                val userId = existing[UsersTable.id]
+                val name = existing[UsersTable.name]
+                val tier = existing[UsersTable.subscriptionTier]
+                val token = JwtConfig.generateToken(userId, guestEmail)
+                AuthResponse(token, userId, guestEmail, name, tier)
+            } else {
+                val userId = UUID.randomUUID().toString()
+                val guestName = "Guest"
+                val hashedPassword = BCrypt.withDefaults().hashToString(12, UUID.randomUUID().toString().toCharArray())
+
+                UsersTable.insert {
+                    it[UsersTable.id] = userId
+                    it[UsersTable.email] = guestEmail
+                    it[UsersTable.passwordHash] = hashedPassword
+                    it[UsersTable.name] = guestName
+                    it[UsersTable.subscriptionTier] = "free"
+                }
+
+                val token = JwtConfig.generateToken(userId, guestEmail)
+                AuthResponse(token, userId, guestEmail, guestName, "free")
+            }
+        }
+    }
+
     fun checkRateLimit(userId: String): Boolean {
         return transaction {
             val user = UsersTable.selectAll().where { UsersTable.id eq userId }.singleOrNull() ?: return@transaction false

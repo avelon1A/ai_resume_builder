@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface AuthRepository {
     suspend fun login(email: String, password: String): Resource<AuthState>
     suspend fun register(email: String, password: String, name: String): Resource<AuthState>
+    suspend fun guestLogin(deviceId: String): Resource<AuthState>
     suspend fun logout()
     fun isLoggedIn(): Flow<Boolean>
     fun getToken(): Flow<String?>

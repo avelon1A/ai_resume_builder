@@ -11,6 +11,9 @@ interface ApiService {
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): AuthResponse
 
+    @POST("auth/guest")
+    suspend fun guestLogin(@Body request: GuestLoginRequest): AuthResponse
+
     @POST("api/generate-resume")
     suspend fun generateResume(
         @Header("Authorization") token: String,

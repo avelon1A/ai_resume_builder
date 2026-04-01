@@ -13,6 +13,10 @@ data class LoginRequest(
     val password: String
 )
 
+data class GuestLoginRequest(
+    val deviceId: String
+)
+
 data class AuthResponse(
     val token: String,
     val userId: String,

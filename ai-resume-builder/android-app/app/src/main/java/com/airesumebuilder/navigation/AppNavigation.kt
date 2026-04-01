@@ -40,7 +40,12 @@ fun AppNavigation() {
     ) {
         composable(Screen.Welcome.route) {
             WelcomeScreen(
-                onContinue = { navController.navigate(Screen.Login.route) }
+                onContinue = { navController.navigate(Screen.Login.route) },
+                onSkipLogin = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 

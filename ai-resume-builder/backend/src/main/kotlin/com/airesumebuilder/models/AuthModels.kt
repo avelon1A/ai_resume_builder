@@ -29,3 +29,8 @@ data class ErrorResponse(
     val error: String,
     val code: Int = 400
 )
+
+@Serializable
+data class GuestLoginRequest(
+    val deviceId: String
+)

@@ -35,5 +35,17 @@ fun Route.authRoutes(authService: AuthService) {
                 call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Login failed"))
             }
         }
+
+        post("/guest") {
+            try {
+                val request = call.receive<GuestLoginRequest>()
+                val response = authService.guestLogin(request)
+                call.respond(HttpStatusCode.OK, response)
+            } catch (e: IllegalArgumentException) {
+                call.respond(HttpStatusCode.BadRequest, ErrorResponse(e.message ?: "Invalid request"))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Guest login failed"))
+            }
+        }
     }
 }
