@@ -1,6 +1,7 @@
 package com.airesumebuilder.plugins
 
 import com.airesumebuilder.ai.OpenAIService
+import com.airesumebuilder.routes.adminRoutes
 import com.airesumebuilder.routes.authRoutes
 import com.airesumebuilder.routes.resumeRoutes
 import com.airesumebuilder.services.AuthService
@@ -27,5 +28,6 @@ fun Application.configureRouting() {
 
         authRoutes(authService)
         resumeRoutes(resumeService)
+        adminRoutes()
     }
 }
