@@ -12,16 +12,16 @@ class ResumeViewModel(
     private val resumeRepository: ResumeRepository
 ) : ViewModel() {
 
-    private val _resumeState = MutableStateFlow<Resource<GenerateResumeResponse>>(Resource.Loading)
+    private val _resumeState = MutableStateFlow<Resource<GenerateResumeResponse>>(Resource.Idle)
     val resumeState: StateFlow<Resource<GenerateResumeResponse>> = _resumeState.asStateFlow()
 
-    private val _resumesList = MutableStateFlow<Resource<List<Resume>>>(Resource.Loading)
+    private val _resumesList = MutableStateFlow<Resource<List<Resume>>>(Resource.Idle)
     val resumesList: StateFlow<Resource<List<Resume>>> = _resumesList.asStateFlow()
 
-    private val _coverLetterState = MutableStateFlow<Resource<String>>(Resource.Loading)
+    private val _coverLetterState = MutableStateFlow<Resource<String>>(Resource.Idle)
     val coverLetterState: StateFlow<Resource<String>> = _coverLetterState.asStateFlow()
 
-    private val _analysisState = MutableStateFlow<Resource<ResumeAnalysis>>(Resource.Loading)
+    private val _analysisState = MutableStateFlow<Resource<ResumeAnalysis>>(Resource.Idle)
     val analysisState: StateFlow<Resource<ResumeAnalysis>> = _analysisState.asStateFlow()
 
     private val _currentResume = MutableStateFlow<Resume?>(null)
@@ -86,10 +86,10 @@ class ResumeViewModel(
     }
 
     fun clearResumeState() {
-        _resumeState.value = Resource.Loading
+        _resumeState.value = Resource.Idle
     }
 
     fun clearCoverLetterState() {
-        _coverLetterState.value = Resource.Loading
+        _coverLetterState.value = Resource.Idle
     }
 }
