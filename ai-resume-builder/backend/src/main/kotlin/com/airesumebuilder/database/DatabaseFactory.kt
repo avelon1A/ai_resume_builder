@@ -36,16 +36,16 @@ object ResumesTable : Table("resumes") {
 
 object DatabaseFactory {
     fun init(config: ApplicationConfig) {
-        val driverClassName = config.propertyOrNull("database.driver")?.getString() ?: "org.h2.Driver"
-        val jdbcURL = config.propertyOrNull("database.jdbcURL")?.getString() ?: "jdbc:h2:mem:resumeBuilder;DB_CLOSE_DELAY=-1"
+        val driver = config.propertyOrNull("database.driver")?.getString() ?: "org.h2.Driver"
+        val jdbcUrl = config.propertyOrNull("database.jdbcURL")?.getString() ?: "jdbc:h2:mem:resumeBuilder;DB_CLOSE_DELAY=-1"
         val dbUser = config.propertyOrNull("database.user")?.getString() ?: ""
-        val dbPassword = config.propertyOrNull("database.password")?.getString() ?: ""
+        val dbPass = config.propertyOrNull("database.password")?.getString() ?: ""
 
         val hikariConfig = HikariConfig().apply {
-            driverClassName = driverClassName
-            jdbcUrl = jdbcURL
+            driverClassName = driver
+            this.jdbcUrl = jdbcUrl
             username = dbUser
-            password = dbPassword
+            password = dbPass
             maximumPoolSize = 10
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"

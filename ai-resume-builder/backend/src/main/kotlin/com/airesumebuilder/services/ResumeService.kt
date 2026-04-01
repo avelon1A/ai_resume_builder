@@ -7,7 +7,6 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class ResumeService(
@@ -69,7 +68,7 @@ class ResumeService(
         return transaction {
             val resumeId = UUID.randomUUID().toString()
             ResumesTable.insert {
-                it[id] = resumeId
+                it[ResumesTable.id] = resumeId
                 it[ResumesTable.userId] = userId
                 it[ResumesTable.title] = title
                 it[ResumesTable.content] = content
@@ -81,7 +80,7 @@ class ResumeService(
 
     fun getUserResumes(userId: String): List<Resume> {
         return transaction {
-            ResumesTable.select { ResumesTable.userId eq userId }
+            ResumesTable.selectAll().where { ResumesTable.userId eq userId }
                 .orderBy(ResumesTable.createdAt, SortOrder.DESC)
                 .map { row ->
                     Resume(
@@ -99,7 +98,7 @@ class ResumeService(
 
     fun getResume(resumeId: String, userId: String): Resume? {
         return transaction {
-            ResumesTable.select {
+            ResumesTable.selectAll().where {
                 (ResumesTable.id eq resumeId) and (ResumesTable.userId eq userId)
             }.singleOrNull()?.let { row ->
                 Resume(
@@ -120,10 +119,10 @@ class ResumeService(
             val updated = ResumesTable.update({
                 (ResumesTable.id eq resumeId) and (ResumesTable.userId eq userId)
             }) {
-                it[title] = request.title
-                it[content] = request.content
-                it[template] = request.template
-                it[updatedAt] = LocalDateTime.now()
+                it[ResumesTable.title] = request.title
+                it[ResumesTable.content] = request.content
+                it[ResumesTable.template] = request.template
+                it[ResumesTable.updatedAt] = LocalDateTime.now()
             }
 
             if (updated > 0) {

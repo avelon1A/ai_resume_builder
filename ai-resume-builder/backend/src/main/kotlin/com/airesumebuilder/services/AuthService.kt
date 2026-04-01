@@ -27,7 +27,7 @@ class AuthService {
         }
 
         return transaction {
-            val existing = UsersTable.select { UsersTable.email eq request.email }.singleOrNull()
+            val existing = UsersTable.selectAll().where { UsersTable.email eq request.email }.singleOrNull()
             if (existing != null) {
                 throw IllegalStateException("Email already registered")
             }
@@ -36,11 +36,11 @@ class AuthService {
             val hashedPassword = BCrypt.withDefaults().hashToString(12, request.password.toCharArray())
 
             UsersTable.insert {
-                it[id] = userId
-                it[email] = request.email
-                it[passwordHash] = hashedPassword
-                it[name] = request.name
-                it[subscriptionTier] = "free"
+                it[UsersTable.id] = userId
+                it[UsersTable.email] = request.email
+                it[UsersTable.passwordHash] = hashedPassword
+                it[UsersTable.name] = request.name
+                it[UsersTable.subscriptionTier] = "free"
             }
 
             val token = JwtConfig.generateToken(userId, request.email)
@@ -50,7 +50,7 @@ class AuthService {
 
     fun login(request: LoginRequest): AuthResponse {
         return transaction {
-            val user = UsersTable.select { UsersTable.email eq request.email }.singleOrNull()
+            val user = UsersTable.selectAll().where { UsersTable.email eq request.email }.singleOrNull()
                 ?: throw IllegalStateException("Invalid credentials")
 
             val hashedPassword = user[UsersTable.passwordHash]
@@ -70,7 +70,7 @@ class AuthService {
 
     fun checkRateLimit(userId: String): Boolean {
         return transaction {
-            val user = UsersTable.select { UsersTable.id eq userId }.singleOrNull() ?: return@transaction false
+            val user = UsersTable.selectAll().where { UsersTable.id eq userId }.singleOrNull() ?: return@transaction false
             val tier = user[UsersTable.subscriptionTier]
             val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
             val lastRequestDate = user[UsersTable.lastRequestDate]
@@ -79,8 +79,8 @@ class AuthService {
             if (lastRequestDate != today) {
                 requestsToday = 0
                 UsersTable.update({ UsersTable.id eq userId }) {
-                    it[apiRequestsToday] = 0
-                    it[lastRequestDate] = today
+                    it[UsersTable.apiRequestsToday] = 0
+                    it[UsersTable.lastRequestDate] = today
                 }
             }
 
@@ -92,7 +92,7 @@ class AuthService {
     fun incrementRequestCount(userId: String) {
         transaction {
             val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
-            val user = UsersTable.select { UsersTable.id eq userId }.singleOrNull() ?: return@transaction
+            val user = UsersTable.selectAll().where { UsersTable.id eq userId }.singleOrNull() ?: return@transaction
             val lastRequestDate = user[UsersTable.lastRequestDate]
             var requestsToday = user[UsersTable.apiRequestsToday]
 
@@ -101,15 +101,15 @@ class AuthService {
             }
 
             UsersTable.update({ UsersTable.id eq userId }) {
-                it[apiRequestsToday] = requestsToday + 1
-                it[lastRequestDate] = today
+                it[UsersTable.apiRequestsToday] = requestsToday + 1
+                it[UsersTable.lastRequestDate] = today
             }
         }
     }
 
     fun getUserTier(userId: String): String {
         return transaction {
-            UsersTable.select { UsersTable.id eq userId }
+            UsersTable.selectAll().where { UsersTable.id eq userId }
                 .singleOrNull()?.get(UsersTable.subscriptionTier) ?: "free"
         }
     }
