@@ -61,6 +61,7 @@ class ResumeViewModel(
                 is Resource.Success -> _currentResume.value = result.data
                 is Resource.Error -> {}
                 is Resource.Loading -> {}
+                is Resource.Idle -> {}
             }
         }
     }
@@ -74,6 +75,7 @@ class ResumeViewModel(
                 }
                 is Resource.Error -> {}
                 is Resource.Loading -> {}
+                is Resource.Idle -> {}
             }
         }
     }
