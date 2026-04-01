@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: resume_builder
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      DB_DRIVER: org.postgresql.Driver
+      DB_URL: jdbc:postgresql://postgres:5432/resume_builder
+      DB_USER: postgres
+      DB_PASSWORD: postgres_password
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
