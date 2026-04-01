@@ -35,6 +35,7 @@ class AuthViewModel(
                 is Resource.Success -> _authState.value = result.data
                 is Resource.Error -> _authState.value = AuthState(error = result.message)
                 is Resource.Loading -> {}
+                is Resource.Idle -> {}
             }
         }
     }
@@ -46,6 +47,7 @@ class AuthViewModel(
                 is Resource.Success -> _authState.value = result.data
                 is Resource.Error -> _authState.value = AuthState(error = result.message)
                 is Resource.Loading -> {}
+                is Resource.Idle -> {}
             }
         }
     }
@@ -57,6 +59,7 @@ class AuthViewModel(
                 is Resource.Success -> _authState.value = result.data
                 is Resource.Error -> _authState.value = AuthState(error = result.message)
                 is Resource.Loading -> {}
+                is Resource.Idle -> {}
             }
         }
     }
