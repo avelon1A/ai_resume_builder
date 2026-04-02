@@ -23,7 +23,8 @@ fun Route.resumeRoutes(resumeService: ResumeService) {
                 } catch (e: IllegalStateException) {
                     call.respond(HttpStatusCode.TooManyRequests, ErrorResponse(e.message ?: "Rate limit exceeded", 429))
                 } catch (e: Exception) {
-                    call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Failed to generate resume"))
+                    call.application.environment.log.error("Generate resume failed", e)
+                    call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Failed to generate resume: ${e.message}"))
                 }
             }
 
