@@ -119,7 +119,7 @@ class AuthService {
                 }
             }
 
-            val limit = if (tier == "premium") Int.MAX_VALUE else 3
+            val limit = if (tier == "premium") Int.MAX_VALUE else 100
             requestsToday < limit
         }
     }
