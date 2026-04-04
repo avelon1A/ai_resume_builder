@@ -5,11 +5,16 @@ if [ -z "$OPENAI_API_KEY" ]; then
     exit 1
 fi
 
+# Export for background processes
+export OPENAI_API_KEY
+
 # Install frontend dependencies
 bun install
 
-# Start backend
-(cd ai-resume-builder/backend && OPENAI_API_KEY=$OPENAI_API_KEY ./gradlew run) &
+# Start backend with OpenAI API key
+cd ai-resume-builder/backend
+./gradlew run &
+cd ../..
 
 # Start frontend
 bun dev &
