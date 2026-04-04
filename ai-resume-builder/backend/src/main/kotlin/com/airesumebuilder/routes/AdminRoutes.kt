@@ -122,5 +122,57 @@ fun Route.adminRoutes() {
                 call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Failed to delete resume"))
             }
         }
+
+        post("/reset-requests/{userId}") {
+            try {
+                val userId = call.parameters["userId"] ?: return@post call.respond(
+                    HttpStatusCode.BadRequest, mapOf("error" to "User ID required")
+                )
+
+                transaction {
+                    UsersTable.update({ UsersTable.id eq userId }) {
+                        it[UsersTable.apiRequestsToday] = 0
+                        it[UsersTable.lastRequestDate] = ""
+                    }
+                }
+                call.respond(HttpStatusCode.OK, mapOf("message" to "Request count reset"))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Failed to reset requests"))
+            }
+        }
+
+        post("/reset-all-requests") {
+            try {
+                transaction {
+                    UsersTable.update { it[UsersTable.apiRequestsToday] = 0 }
+                }
+                call.respond(HttpStatusCode.OK, mapOf("message" to "All request counts reset"))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Failed to reset requests"))
+            }
+        }
+
+        delete("/resumes") {
+            try {
+                transaction {
+                    ResumesTable.deleteAll()
+                }
+                call.respond(HttpStatusCode.OK, mapOf("message" to "All resumes deleted"))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Failed to delete resumes"))
+            }
+        }
+
+        delete("/users") {
+            try {
+                transaction {
+                    ResumesTable.deleteAll()
+                    UsersTable.deleteAll()
+                }
+                call.respond(HttpStatusCode.OK, mapOf("message" to "All users and resumes deleted"))
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Failed to delete users"))
+            }
+        }
     }
 }
