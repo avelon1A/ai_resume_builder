@@ -12,7 +12,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
-    val openAiApiKey = environment.config.propertyOrNull("openai.apiKey")?.getString() ?: ""
+    val openAiApiKey = System.getenv("OPENAI_API_KEY") ?: environment.config.propertyOrNull("openai.apiKey")?.getString() ?: ""
+    println("Initializing with OpenAI API key: ${if (openAiApiKey.isNotBlank()) "SET" else "NOT SET"}")
     val openAIService = OpenAIService(openAiApiKey)
     val authService = AuthService()
     val resumeService = ResumeService(openAIService, authService)
