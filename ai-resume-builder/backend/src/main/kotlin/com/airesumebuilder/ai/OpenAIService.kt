@@ -135,36 +135,34 @@ class OpenAIService(private val apiKey: String) {
             throw IllegalStateException("OpenAI API key is not set. Please set OPENAI_API_KEY environment variable.")
         }
 
-        val request = OpenAIRequest(
-            messages = listOf(
-                OpenAIMessage(role = "system", content = "You are an expert resume writer and career coach. Provide professional, well-formatted responses."),
-                OpenAIMessage(role = "user", content = prompt)
-            )
+        val request = mapOf(
+            "model" to "gpt-4o-mini",
+            "messages" to listOf(
+                mapOf("role" to "system", "content" to "You are an expert resume writer and career coach. Provide professional, well-formatted responses."),
+                mapOf("role" to "user", "content" to prompt)
+            ),
+            "max_tokens" to 2000,
+            "temperature" to 0.7
         )
 
-        try {
-            val response = client.post("https://api.openai.com/v1/chat/completions") {
-                contentType(ContentType.Application.Json)
-                header("Authorization", "Bearer $apiKey")
-                setBody(request)
-            }
-
-            if (response.status != HttpStatusCode.OK) {
-                try {
-                    val errorBody = response.body<String>()
-                    println("OpenAI API error: ${response.status} - $errorBody")
-                } catch (e: Exception) {
-                    println("OpenAI API error: ${response.status}")
-                }
-                throw IllegalStateException("OpenAI API error: ${response.status}. Check your API key.")
-            }
-
-            val openAIResponse: OpenAIResponse = response.body()
-            return openAIResponse.choices.firstOrNull()?.message?.content ?: "Unable to generate response."
-        } catch (e: Exception) {
-            println("OpenAI request failed: ${e.message}")
-            throw IllegalStateException("OpenAI request failed: ${e.message}")
+        val response = client.post("https://api.openai.com/v1/chat/completions") {
+            contentType(ContentType.Application.Json)
+            header("Authorization", "Bearer $apiKey")
+            setBody(request)
         }
+
+        if (response.status != HttpStatusCode.OK) {
+            try {
+                val errorBody = response.body<String>()
+                println("OpenAI API error: ${response.status} - $errorBody")
+            } catch (e: Exception) {
+                println("OpenAI API error: ${response.status}")
+            }
+            throw IllegalStateException("OpenAI API error: ${response.status}. Check your API key.")
+        }
+
+        val openAIResponse: OpenAIResponse = response.body()
+        return openAIResponse.choices.firstOrNull()?.message?.content ?: "Unable to generate response."
     }
 }
 
