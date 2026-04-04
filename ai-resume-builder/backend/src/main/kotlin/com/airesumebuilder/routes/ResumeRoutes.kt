@@ -21,6 +21,7 @@ fun Route.resumeRoutes(resumeService: ResumeService) {
                     val response = resumeService.generateResume(request, userId)
                     call.respond(HttpStatusCode.OK, response)
                 } catch (e: IllegalStateException) {
+                    call.application.environment.log.error("Rate limit error: ${e.message}")
                     call.respond(HttpStatusCode.TooManyRequests, ErrorResponse(e.message ?: "Rate limit exceeded", 429))
                 } catch (e: Exception) {
                     call.application.environment.log.error("Generate resume failed", e)
