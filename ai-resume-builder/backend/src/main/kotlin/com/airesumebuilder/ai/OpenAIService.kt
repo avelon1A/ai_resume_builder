@@ -34,6 +34,18 @@ data class OpenAIResponse(
     val choices: List<OpenAIChoice>
 )
 
+@Serializable
+data class OpenAIError(
+    val error: OpenAIErrorDetail
+)
+
+@Serializable
+data class OpenAIErrorDetail(
+    val message: String,
+    val type: String,
+    val code: String? = null
+)
+
 class OpenAIService(private val apiKey: String) {
 
     private val client = HttpClient(CIO) {
@@ -42,6 +54,12 @@ class OpenAIService(private val apiKey: String) {
                 ignoreUnknownKeys = true
                 isLenient = true
             })
+        }
+    }
+
+    init {
+        if (apiKey.isBlank()) {
+            println("WARNING: OpenAI API key is not set! Set OPENAI_API_KEY environment variable.")
         }
     }
 
@@ -113,6 +131,10 @@ class OpenAIService(private val apiKey: String) {
     }
 
     private suspend fun callOpenAI(prompt: String): String {
+        if (apiKey.isBlank()) {
+            throw IllegalStateException("OpenAI API key is not set. Please set OPENAI_API_KEY environment variable.")
+        }
+
         val request = OpenAIRequest(
             messages = listOf(
                 OpenAIMessage(role = "system", content = "You are an expert resume writer and career coach. Provide professional, well-formatted responses."),
@@ -120,13 +142,25 @@ class OpenAIService(private val apiKey: String) {
             )
         )
 
-        val response: OpenAIResponse = client.post("https://api.openai.com/v1/chat/completions") {
-            contentType(ContentType.Application.Json)
-            header("Authorization", "Bearer $apiKey")
-            setBody(request)
-        }.body()
+        try {
+            val response = client.post("https://api.openai.com/v1/chat/completions") {
+                contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer $apiKey")
+                setBody(request)
+            }
 
-        return response.choices.firstOrNull()?.message?.content ?: "Unable to generate response."
+            if (response.status != HttpStatusCode.OK) {
+                val errorBody = response.bodyNullable<String>()
+                println("OpenAI API error: ${response.status} - $errorBody")
+                throw IllegalStateException("OpenAI API error: ${response.status}. Check your API key.")
+            }
+
+            val openAIResponse: OpenAIResponse = response.body()
+            return openAIResponse.choices.firstOrNull()?.message?.content ?: "Unable to generate response."
+        } catch (e: Exception) {
+            println("OpenAI request failed: ${e.message}")
+            throw IllegalStateException("OpenAI request failed: ${e.message}")
+        }
     }
 }
 
