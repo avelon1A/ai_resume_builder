@@ -120,7 +120,7 @@ fun ResumeBuilderScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        FormField(value = certifications, onValueChange = { certifications = it }, label = "Certifications (optional)", icon = Icons.Default.Certificate, minLines = 2)
+        FormField(value = certifications, onValueChange = { certifications = it }, label = "Certifications (optional)", icon = Icons.Default.Verified, minLines = 2)
 
         if (resumeState is Resource.Error) {
             Spacer(modifier = Modifier.height(8.dp))
