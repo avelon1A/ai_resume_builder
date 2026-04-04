@@ -150,8 +150,12 @@ class OpenAIService(private val apiKey: String) {
             }
 
             if (response.status != HttpStatusCode.OK) {
-                val errorBody = response.bodyNullable<String>()
-                println("OpenAI API error: ${response.status} - $errorBody")
+                try {
+                    val errorBody = response.body<String>()
+                    println("OpenAI API error: ${response.status} - $errorBody")
+                } catch (e: Exception) {
+                    println("OpenAI API error: ${response.status}")
+                }
                 throw IllegalStateException("OpenAI API error: ${response.status}. Check your API key.")
             }
 
