@@ -15,9 +15,10 @@ class ResumeService(
 ) {
 
     suspend fun generateResume(request: GenerateResumeRequest, userId: String): GenerateResumeResponse {
-        if (!authService.checkRateLimit(userId)) {
-            throw IllegalStateException("Rate limit exceeded. Free users can make 3 AI requests per day.")
-        }
+        // Rate limit temporarily disabled for testing
+        // if (!authService.checkRateLimit(userId)) {
+        //     throw IllegalStateException("Rate limit exceeded. Free users can make 100 AI requests per day.")
+        // }
 
         val resumeContent = openAIService.generateResume(
             name = request.name,
@@ -37,9 +38,10 @@ class ResumeService(
     }
 
     suspend fun generateCoverLetter(request: GenerateCoverLetterRequest, userId: String): GenerateCoverLetterResponse {
-        if (!authService.checkRateLimit(userId)) {
-            throw IllegalStateException("Rate limit exceeded. Free users can make 3 AI requests per day.")
-        }
+        // Rate limit temporarily disabled for testing
+        // if (!authService.checkRateLimit(userId)) {
+        //     throw IllegalStateException("Rate limit exceeded. Free users can make 100 AI requests per day.")
+        // }
 
         val coverLetter = openAIService.generateCoverLetter(
             name = request.name,
@@ -54,12 +56,13 @@ class ResumeService(
     }
 
     suspend fun analyzeResume(request: AnalyzeResumeRequest, userId: String): AnalyzeResumeResponse {
-        if (!authService.checkRateLimit(userId)) {
-            throw IllegalStateException("Rate limit exceeded. Free users can make 3 AI requests per day.")
-        }
+        // Rate limit temporarily disabled for testing
+        // if (!authService.checkRateLimit(userId)) {
+        //     throw IllegalStateException("Rate limit exceeded. Free users can make 100 AI requests per day.")
+        // }
 
         val (score, suggestions) = openAIService.analyzeResume(request.resumeText)
-        authService.incrementRequestCount(userId)
+        // authService.incrementRequestCount(userId)
 
         return AnalyzeResumeResponse(suggestions = suggestions, score = score)
     }
